@@ -43,15 +43,16 @@ public class MsSqlHelper extends SqlHelper {
 	@Override
 	protected Connection connect() {
 		try {
-			String url = "jdbc:sqlserver://" + getHost() + ";databaseName="
-					+ getDatabase();
+			String url = "jdbc:jtds:sqlserver://" + getHost() + ":1433;databaseName="+ getDatabase();
 			if (winlogon == false) {
-				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+				Class.forName("net.sourceforge.jtds.jdbc.Driver");
 				setConnect(DriverManager.getConnection(url, getUser(), getPasswd()));
 			} else {
 				url = url + ";integratedSecurity=true";
-				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-				setConnect(DriverManager.getConnection(url));
+				System.out.println("with winlogon - "+url);
+				Class.forName("net.sourceforge.jtds.jdbc.Driver");
+				Connection c = DriverManager.getConnection(url); 
+				setConnect(c);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

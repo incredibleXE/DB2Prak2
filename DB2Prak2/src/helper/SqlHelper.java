@@ -30,7 +30,7 @@ public abstract class SqlHelper {
 			if (e instanceof SQLException) {
 				if (ignoreSQLException(((SQLException) e).getSQLState()) == false) {
 
-					//e.printStackTrace(System.err);
+					e.printStackTrace(System.err);
 					System.err.println("SQLState: "
 							+ ((SQLException) e).getSQLState());
 
