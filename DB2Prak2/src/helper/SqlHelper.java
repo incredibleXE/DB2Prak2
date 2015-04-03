@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class SqlHelper {
 	private String database = null, user = null, passwd = null, host = null;
@@ -72,7 +74,8 @@ public abstract class SqlHelper {
 	 * @param query a normal sql statement as string 
 	 * @return ResultSet
 	 */
-	public ResultSet executeSQLQuery(String query) {
+	public List<String[]> executeSQLQuery(String query) {
+		List<String[]> rows = null;
 		try {
 			setConnect(connect());
 			// Statements allow to issue SQL queries to the database
@@ -80,10 +83,15 @@ public abstract class SqlHelper {
 			// Result set get the result of the SQL query
 			setResultSet(getStatement()
 					.executeQuery(query));
+			
+			rows = resultSetToList();
+			
+			close();
 		} catch (SQLException e) {
 			printSQLException(e);
 		}
-		return getResultSet();
+		
+		return rows;
 	}
 	
 	/**
@@ -93,7 +101,8 @@ public abstract class SqlHelper {
 	 * @param arguments String array with arguments in order to their places in the statement
 	 * @return resultSet the answer from database
 	 */
-	public ResultSet executePreparedStatement(String statement, String[] arguments)  {
+	public List<String[]> executePreparedStatement(String statement, String[] arguments)  {
+		List<String[]> rows = null;
 		setConnect(connect());
 		try {
 			setPreparedStatement(getConnect().prepareStatement(statement));
@@ -101,15 +110,38 @@ public abstract class SqlHelper {
 				getPreparedStatement().setString(i, arguments[i-1]);
 			}
 			setResultSet(getPreparedStatement().executeQuery());
-			return getResultSet();
+			
+			rows = resultSetToList();
+			
+			close();
 		} catch (SQLException e) {
 			printSQLException(e);
 		}
-		return null;
+		return rows;
 	}
 	
 	protected abstract Connection connect();
 	
+	private List<String[]> resultSetToList() throws SQLException {
+		int columnCount = getResultSet().getMetaData().getColumnCount();
+		List<String[]> rows = new ArrayList<String[]>();
+		
+		String[] rowHeader = new String[columnCount];
+		for (int i = 1; i <= columnCount; i++) {
+			rowHeader[i-1]=resultSet.getMetaData().getColumnName(i);
+		}
+		rows.add(rowHeader);
+		
+        while(getResultSet().next()){
+            String[] row = new String[columnCount];
+            for(int i = 1;i<=columnCount;i++){
+                row[i-1]=getResultSet().getString(i).trim();
+            }
+            rows.add(row);
+        }
+        
+        return rows;
+	}
 	
 	/**
 	 * testing the connection
@@ -149,34 +181,35 @@ public abstract class SqlHelper {
 		}
 	}
 	
-	public void writeMetaData(ResultSet resultSet) throws SQLException {
+	private void writeMetaData(List<String[]> list) throws SQLException {
 		// Now get some metadata from the database
 		// Result set get the result of the SQL query
 
-		System.out.println("Table: " + resultSet.getMetaData().getTableName(1));
-		for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
-			System.out.print(resultSet.getMetaData().getColumnName(i)+" | ");
+		String[] row = list.get(0);
+		for (int i = 0; i < row.length; i++) {
+			System.out.print(row[i].toString()+" | ");
 		}
 		System.out.println();
 	}
 
-	public void writeResultSet(ResultSet resultSet) throws SQLException {
-		// ResultSet is initially before the first data set
-		while (resultSet.next()) {
-			// It is possible to get the columns via name
-			// also possible to get the columns via the column number
-			// which starts at 1
-			// e.g. resultSet.getSTring(2);
-			for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
-				System.out.print(resultSet.getString(i)+" | ");
+	private void writeResultSet(List<String[]> list) throws SQLException {
+		for(int a=1;list.size()>a;a++) {
+			String[] row = list.get(a);
+			for (int i = 0; i < row.length; i++) {
+				System.out.print(row[i].toString()+" | ");
 			}
 			System.out.println();
 		}
 	}
 	
-	public void writeResultSetWithMeta(ResultSet resultSet) throws SQLException {
-		this.writeMetaData(resultSet);
-		this.writeResultSet(resultSet);
+	public void writeResultSetWithMeta(List<String[]> list) {
+		try {
+			this.writeMetaData(list);
+			this.writeResultSet(list);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			SqlHelper.printSQLException(e);
+		}
 	}
 	
 	/*

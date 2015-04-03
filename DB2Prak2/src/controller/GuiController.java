@@ -6,8 +6,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import model.Databean;
 
 public class GuiController {
@@ -17,45 +15,42 @@ public class GuiController {
 		this.bean = bean;
 	}
 	
-	public void start(Stage mainStage) {
-	      mainStage.setTitle("DB2Prak2");
+	public void start() {
+	      bean.getStage().setTitle("DB2Prak2");
 	      Group root = new Group();
-	      Scene scene = new Scene(root, 240, 100);
-	      //scene.getStylesheets().add("stylesheet.css");
+	      Scene scene = new Scene(root, bean.getStage_width(), bean.getStage_height());
+	      scene.getStylesheets().add("/resources/stylesheet.css");
 	 
 	      TabPane tabPane = new TabPane();
+	      tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 	 
 	      BorderPane borderPane = new BorderPane();
-	      { // Kunden Tab
+	      {
 	         Tab tab = new Tab();
 	         tab.setText("Kunde");
 	         GridPane grid = new GridPane();
 	         {
-	        	 new CustomerController(grid);
+	        	 new CustomerController(grid, bean);
 	         }
 	         tab.setContent(grid);
-	         tabPane.getTabs().add(tab);
 	         
-	         Tab tab2 = new Tab();
-	         tab2.setText("Mitarbeiter");
+	         Tab tab1 = new Tab("Mitarbeiter");
+	         GridPane grid1 = new GridPane();
+	         {
+	        	 new WorkerController(grid1);
+	         }
+	         tab1.setContent(grid1);
+	         
+	         Tab tab2 = new Tab("test");
 	         GridPane grid2 = new GridPane();
 	         {
 	        	 new WorkerController(grid2);
 	         }
 	         tab2.setContent(grid2);
-	         tabPane.getTabs().add(tab2);
 	         
-	         Tab tab3 = new Tab();
-	         tab3.setText("Mitarbeiter");
-	         GridPane grid3 = new GridPane();
-	         {
-	        	 new WorkerController(grid3);
-	         }
-	         tab3.setContent(grid3);
-	         tabPane.getTabs().add(tab3);
+	         tabPane.getTabs().addAll(tab,tab1,tab2);
 	      }
 	 
-	      // Verfügbaren Platz ausnützen:
 	      borderPane.prefHeightProperty()
 	                .bind(scene.heightProperty());
 	      borderPane.prefWidthProperty()
@@ -64,8 +59,8 @@ public class GuiController {
 	      borderPane.setCenter(tabPane);
 	      root.getChildren().add(borderPane);
 	 
-	      mainStage.setScene(scene);
-	      mainStage.show();
+	      bean.getStage().setScene(scene);
+	      bean.getStage().show();
 	}
 
 }
