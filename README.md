@@ -44,7 +44,9 @@ Damit diese Authentifikationsart funktioniert, müsst ihr jedoch noch die "ntlma
 lib/i868/SSO/ntlmauth.dll -> C:\Program Files (x86)\Java\jre7\lib\i386
 ```
 #### für 64 Bit Java 7 jre
+```
 lib/amd64/SSO/ntlmauth.dll -> C:\Program Files\Java\jre7\lib\amd64
+```
 
 #### für 32 Bit Java 8 jre
 ```
