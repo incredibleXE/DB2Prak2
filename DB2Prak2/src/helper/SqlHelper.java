@@ -40,6 +40,7 @@ public abstract class SqlHelper {
 	 * treats the exception before it print it to console
 	 *  
 	 * @param ex SQLException
+	 * @return error as string
 	 */
 	public static String printSQLException(SQLException ex) {
 		String error = "";
@@ -94,7 +95,7 @@ public abstract class SqlHelper {
 	 * 
 	 * @param query a normal sql statement as string 
 	 * @return ResultSet
-	 * @throws SQLException which can be handled with {@link helper.SqlHelper.class#printSQLException(SQLException e)
+	 * @throws SQLException which can be handled with helper.SqlHelper.class#printSQLException(SQLException e)
 	 */
 	public List<String[]> executeSQLQuery(String query) throws SQLException {
 		List<String[]> rows = null;
@@ -114,8 +115,8 @@ public abstract class SqlHelper {
 	/**
 	 * for SQL Querys without result (INSERT / DELETE / USE) 
 	 * 
-	 * @param query
-	 * @throws SQLException
+	 * @param query sql statement
+	 * @throws SQLException which can be handled with helper.SqlHelper.class#printSQLException(SQLException e)
 	 */
 	public void executeSQLQueryWithoutResult(String query) throws SQLException {
 		setConnect(connect());
@@ -133,7 +134,7 @@ public abstract class SqlHelper {
 	 * @param statement SQL Query with ?
 	 * @param arguments String array with arguments in order to their places in the statement
 	 * @return resultSet the answer from database
-	 * @throws SQLException which can be handled with {@link helper.SqlHelper.class#printSQLException(SQLException e)
+	 * @throws SQLException which can be handled with helper.SqlHelper.class#printSQLException(SQLException e)
 	 */
 	public List<String[]> executePreparedStatement(String statement, String[] arguments) throws SQLException {
 		List<String[]> rows = null;
@@ -187,7 +188,8 @@ public abstract class SqlHelper {
 	/**
 	 * testing the connection
 	 * 
-	 * @return boolean - true -> connection is working | false -> not
+	 * @return boolean - true - connection is working | false - not
+	 * @throws SQLException which can be handled with helper.SqlHelper.class#printSQLException(SQLException e)
 	 */
 	public boolean testConnection() throws SQLException {
 		System.out.println("=== Test db connection ===");
@@ -277,10 +279,10 @@ public abstract class SqlHelper {
 	/**
 	 * writes everything from given SQL list on console
 	 * @param  list from executed Query method on this class
-	 * @link helper.SqlHelper.class#executePreparedStatement(String statement, String[] arguments)
-	 * @link helper.SqlHelper.class#executeSQLQuery(String query)  
-	 * @link helper.SqlHelper.class#writeMetaData(List<String[]> list)
-	 * @link helper.SqlHelper.class#writeResultSet(List<String[]> list)
+	 * @link helper.SqlHelper#executePreparedStatement(String statement, String[] arguments) executePreparedStatement
+	 * @link helper.SqlHelper#executeSQLQuery(String query) executeSQLQuery
+	 * @link helper.SqlHelper#writeMetaData(List<String[]> list) writeMetaData
+	 * @link helper.SqlHelper#writeResultSet(List<String[]> list) writeResultSet
 	 */
 	public void writeResultSetWithMeta(List<String[]> list) {
 		try {
@@ -326,7 +328,7 @@ public abstract class SqlHelper {
 	}
 	
 	/**
-	 * @param database
+	 * @param database String
 	 */
 	public void setDatabase(String database) {
 		this.database = database;
@@ -334,7 +336,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @param user
+	 * @param user String
 	 */
 	public void setUser(String user) {
 		this.user = user;
@@ -342,7 +344,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @param passwd
+	 * @param passwd String
 	 */
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
@@ -350,7 +352,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @param host
+	 * @param host String
 	 */
 	public void setHost(String host) {
 		this.host = host;
@@ -358,7 +360,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @return connect
+	 * @return connect String
 	 */
 	public Connection getConnect() {
 		return connect;
@@ -366,7 +368,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @return statement
+	 * @return statement String
 	 */
 	public Statement getStatement() {
 		return statement;
@@ -374,7 +376,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @return resultSet
+	 * @return resultSet String
 	 */
 	public ResultSet getResultSet() {
 		return resultSet;
@@ -382,7 +384,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @return preparedStatement
+	 * @return preparedStatement PreparedStatement
 	 */
 	public PreparedStatement getPreparedStatement() {
 		return preparedStatement;
@@ -390,7 +392,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @param connect
+	 * @param connect Connection
 	 */
 	public void setConnect(Connection connect) {
 		this.connect = connect;
@@ -398,7 +400,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @param statement
+	 * @param statement Statement
 	 */
 	public void setStatement(Statement statement) {
 		this.statement = statement;
@@ -406,7 +408,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @param resultSet
+	 * @param resultSet ResultSet
 	 */
 	public void setResultSet(ResultSet resultSet) {
 		this.resultSet = resultSet;
@@ -414,7 +416,7 @@ public abstract class SqlHelper {
 
 	/**
 	 * 
-	 * @param preparedStatement
+	 * @param preparedStatement PreparedStatement
 	 */
 	public void setPreparedStatement(PreparedStatement preparedStatement) {
 		this.preparedStatement = preparedStatement;
