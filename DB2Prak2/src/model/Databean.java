@@ -10,7 +10,12 @@ import javafx.stage.Stage;
  *
  */
 public class Databean {
-	// defines which database should be used
+	/**
+	 * ENUM for decision which SQL Connector should be used
+	 * 
+	 * @version 0.1
+	 * @author incredibleXE
+	 */
 	public enum DATABASE_TYPE {
 	    MsSQL, MySQL;
 	}
@@ -35,9 +40,12 @@ public class Databean {
 	private String newEntryDisplayTxt = "(wird automatisch gefüllt)";
 	
 	/**
-	 * empty constructor
+	 * minimal constructor
+	 * 
+	 * @param type ENUM Database type {@see DATABASE_TYPE}
 	 */
-	public Databean() {
+	public Databean(DATABASE_TYPE type) {
+		this.type = type;
 	}
 	
 	/**

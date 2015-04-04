@@ -23,7 +23,7 @@ Databean bean = new Databean("localhost","databasename","user","passwd",DATABASE
 
 ### Möglichkeit 2
 ```javascript
-Databean bean = new Databean();
+Databean bean = new Databean(DATABASE_TYPE.MsSQL);
 bean.setHost("host");
 bean.setDatabase("database");
 bean.setUser("username");
