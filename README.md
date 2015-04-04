@@ -14,6 +14,8 @@ Das Projekt ist noch lange nicht fertig, funktioniert aber schon.
 3. Projekt starten
 
 ## Anmeldedaten ändern
+Öffnet die Main.class in main package. In der Methode "start(Stage stage)" findet ihr die Stelle an der ihr die Logindaten angeben müsst.
+
 ### Möglichkeit 1
 ```javascript
 Databean bean = new Databean("localhost","databasename","user","passwd",DATABASE_TYPE.MsSQL);
@@ -36,6 +38,22 @@ bean.setWinlogon(true);
 bean.setUser("");
 bean.setPasswd("");
 ```
+Damit diese Authentifikationsart funktioniert, müsst ihr jedoch noch die "ntlmauth.dll" aus dem ordner "lib/EURE_ARCHITEKTUR/SSO/" in den Java lib Ordner kopieren.
+#### für 32 Bit Java 7 jre
+```
+lib/i868/SSO/ntlmauth.dll -> C:\Program Files (x86)\Java\jre7\lib\i386
+```
+#### für 64 Bit Java 7 jre
+lib/amd64/SSO/ntlmauth.dll -> C:\Program Files\Java\jre7\lib\amd64
+
+#### für 32 Bit Java 8 jre
+```
+lib/i868/SSO/ntlmauth.dll -> C:\Program Files (x86)\jre1.8.0_25\jre7\lib\i386
+```
+#### für 64 Bit Java 8 jre
+lib/amd64/SSO/ntlmauth.dll -> C:\Program Files\Java\jre1.8.0_25\lib\amd64
+
+Benutzt ihr einen SDK muss der Link entsprechend angepasst werden.
 
 ## Lizenz
 Ihr könnt mein Projekt gern verwenden wie ihr möchtet.
