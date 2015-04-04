@@ -51,7 +51,9 @@ lib/amd64/SSO/ntlmauth.dll -> C:\Program Files\Java\jre7\lib\amd64
 lib/i868/SSO/ntlmauth.dll -> C:\Program Files (x86)\jre1.8.0_25\jre7\lib\i386
 ```
 #### für 64 Bit Java 8 jre
+```
 lib/amd64/SSO/ntlmauth.dll -> C:\Program Files\Java\jre1.8.0_25\lib\amd64
+```
 
 Benutzt ihr einen SDK muss der Link entsprechend angepasst werden.
 
