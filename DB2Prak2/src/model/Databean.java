@@ -1,7 +1,14 @@
 package model;
 
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+/**
+ * save class for almost all informations sharing for all controller 
+ * @author incredibleXE
+ * @version 0.1
+ *
+ */
 public class Databean {
 	// defines which database should be used
 	public enum DATABASE_TYPE {
@@ -21,9 +28,27 @@ public class Databean {
 	// Stage height and width
 	private int stage_width = 0, stage_height = 0;
 	
+	//Console for sql Exceptions
+	private TextArea console = new TextArea();
+	
+	// some strings
+	private String newEntryDisplayTxt = "(wird automatisch gefüllt)";
+	
+	/**
+	 * empty constructor
+	 */
 	public Databean() {
 	}
 	
+	/**
+	 * constructor
+	 * 
+	 * @param host server where database is running on
+	 * @param database database name to which should connecting to
+	 * @param user for authentication
+	 * @param passwd for authentication
+	 * @param winlogon use this value to enable windows authentication to database server
+	 */
 	public Databean(String host, String database, String user, String passwd, DATABASE_TYPE type) {
 		this.type = type;
 		this.host = host;
@@ -151,6 +176,20 @@ public class Databean {
 	 */
 	public DATABASE_TYPE getType() {
 		return type;
+	}
+
+	/**
+	 * @return the console
+	 */
+	public TextArea getConsole() {
+		return console;
+	}
+
+	/**
+	 * @return the newEntryDisplayTxt
+	 */
+	public String getNewEntryDisplayTxt() {
+		return newEntryDisplayTxt;
 	}
 	
 

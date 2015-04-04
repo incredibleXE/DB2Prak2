@@ -1,37 +1,34 @@
 package controller;
 
-import model.Databean;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import model.Databean;
 
 /**
- * controller for table "Kunde"
+ * controller for table "T‰tigkeit"
  * 
  * @extends controller.DbController.class
+ * @author franacher
  * @version 0.1
- * @author incredibleXE
- * 
  */
-public class CustomerController extends DbController {
+public class ActivityController extends DbController {
 	private GridPane grid = null;
 	
 	// SQL Statements
-	private String sql_tableName = "Kunde";
-	private String sql_idField = "KundenNr";
+	private String sql_tableName = "Taetigkeit";
+	private String sql_idField = "TaetigkeitsID";
 	private String sql_select = "SELECT * FROM "+sql_tableName;
-	private String sql_newEntry = "INSERT INTO "+sql_tableName+" (Name,Vorname,Strasse,HausNr,Postleitzahl) VALUES ";
+	private String sql_newEntry = "INSERT INTO "+sql_tableName+" (Bezeichnung,Stundenlohn,TaetigkeitskategorieID) VALUES ";
 	private String sql_saveEntry = "UPDATE "+sql_tableName+" SET ";
 	
 	// text fields
 	private TextField textField_id = new TextField();
 	private TextField textField_name = new TextField();
-	private TextField textField_forename = new TextField();
-	private TextField textField_street = new TextField();
-	private TextField textField_number = new TextField();
-	private TextField textField_postal = new TextField();
+	private TextField textField_amountperhour = new TextField();
+	private TextField textField_activitycategory = new TextField();
 	
-	// some strings
+	// somem strings
 	private String newEntryDisplayTxt; 
 	
 	/**
@@ -41,7 +38,7 @@ public class CustomerController extends DbController {
 	 * @param grid GridPane from {@link controller.GuiController.class)
 	 * @param bean Databean where all informations are saved in {@link model.Databean.class}
 	 */
-	public CustomerController(GridPane grid, Databean bean) {
+	public ActivityController(GridPane grid,Databean bean) {
 		super(bean);
 		
 		// language from Databean
@@ -60,7 +57,6 @@ public class CustomerController extends DbController {
 		// Listener 
 		//
 		initListener();
-		
 	}
 	
 	/**
@@ -72,14 +68,13 @@ public class CustomerController extends DbController {
 	protected void writeDataToForm() {
 		textField_id.setText(result.get(this.displayedRow)[0]);
 		textField_name.setText(result.get(this.displayedRow)[1]);
-		textField_forename.setText(result.get(this.displayedRow)[2]);
-		textField_street.setText(result.get(this.displayedRow)[3]);
-		textField_number.setText(result.get(this.displayedRow)[4]);
-		textField_postal.setText(result.get(this.displayedRow)[5]);
+		textField_amountperhour.setText(result.get(this.displayedRow)[2]);
+		textField_activitycategory.setText(result.get(this.displayedRow)[3]);
 	}
 	
 	/**
-	 * @see DbController#makeForm()
+	 * builds the form and adds it to the grid from {@link controller.GuiController}
+	 * Additional it adds four buttons at the bottom for last entry, next entry, new entry and delete entry 
 	 */
 	@Override
 	protected void makeForm() {
@@ -97,23 +92,13 @@ public class CustomerController extends DbController {
 			}
 			{ // column 3
 				column++;
-				formGrid.add(new Label("Vorname:"), 0, column);
-				formGrid.add(textField_forename, 1, column);
+				formGrid.add(new Label("Stundenlohn:"), 0, column);
+				formGrid.add(textField_amountperhour, 1, column);
 			}
 			{ // column 4
 				column++;
-				formGrid.add(new Label("Straﬂe:"), 0, column);
-				formGrid.add(textField_street, 1, column);
-			}
-			{ // column 4
-				column++;
-				formGrid.add(new Label("Hausnummer:"), 0, column);
-				formGrid.add(textField_number, 1, column);
-			}
-			{ // column 5
-				column++;
-				formGrid.add(new Label("postal:"), 0, column);
-				formGrid.add(textField_postal, 1, column);
+				formGrid.add(new Label("T‰tigkeitskategorie:"), 0, column);
+				formGrid.add(textField_activitycategory, 1, column);
 			}
 		}
 		this.grid.add(formGrid, 0, 0);
@@ -126,12 +111,10 @@ public class CustomerController extends DbController {
 	 */
 	@Override
 	protected void button_new_handle() {
-		textField_id.setText(newEntryDisplayTxt);
+    	textField_id.setText(newEntryDisplayTxt);
 		textField_name.setText("");
-		textField_forename.setText("");
-		textField_street.setText("");
-		textField_number.setText("");
-		textField_postal.setText("");
+		textField_amountperhour.setText("");
+		textField_activitycategory.setText("");
 		button_new.setText("Reset");
 		button_delete.setDisable(true);
 	}
@@ -141,7 +124,7 @@ public class CustomerController extends DbController {
 	 */
 	@Override
 	protected void button_delete_handle() {
-		deleteEntry(sql_tableName,sql_idField+"="+textField_id.getText().toString());
+    	deleteEntry(sql_tableName,sql_idField+"="+textField_id.getText().toString());
     	
     	updateForm(sql_select);
     	button_new.setText("Neu");
@@ -153,13 +136,12 @@ public class CustomerController extends DbController {
 	@Override
 	protected void button_save_handle() {
     	if(textField_id.getText().toString().equals(newEntryDisplayTxt)) {
-    		String valueTxt = "('"+textField_name.getText()+"','"+textField_forename.getText()+"','"+textField_street.getText()+"','"+textField_number.getText()+"','"+textField_postal.getText()+"')";
+    		String valueTxt = "('"+textField_name.getText()+"','"+textField_amountperhour.getText()+"','"+textField_activitycategory.getText()+"')";
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
-    		String valueTxt = "Name='"+textField_name.getText()+"',Vorname='"+textField_forename.getText()
-    				+"',Strasse='"+textField_street.getText()+"',HausNr='"+textField_number.getText()
-    				+"',Postleitzahl='"+textField_postal.getText()+"' WHERE "+sql_idField+"="+textField_id.getText();
+    		String valueTxt = "Name='"+textField_name.getText()+"',Vorname='"+textField_amountperhour.getText()
+    				+"',Strasse='"+textField_activitycategory.getText()+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
     	updateForm(sql_select);

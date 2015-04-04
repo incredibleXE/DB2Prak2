@@ -8,6 +8,13 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Sql Helper
+ * 
+ * @version 0.1 
+ * @author incredibleXE
+ *
+ */
 public abstract class SqlHelper {
 	private String database = null, user = null, passwd = null, host = null;
 	private Connection connect = null;
@@ -15,6 +22,13 @@ public abstract class SqlHelper {
 	private ResultSet resultSet = null;
 	private PreparedStatement preparedStatement = null;
 	
+	/**
+	 * 
+	 * @param host server where database is running on
+	 * @param database database name to which should connecting to
+	 * @param user for authentication
+	 * @param passwd for authentication
+	 */
 	public SqlHelper(String host, String database, String user, String passwd) {
 		this.database = database;
 		this.host = host;
@@ -27,31 +41,38 @@ public abstract class SqlHelper {
 	 *  
 	 * @param ex SQLException
 	 */
-	public static void printSQLException(SQLException ex) {
+	public static String printSQLException(SQLException ex) {
+		String error = "";
 		for (Throwable e : ex) {
 			if (e instanceof SQLException) {
 				if (ignoreSQLException(((SQLException) e).getSQLState()) == false) {
 
 					e.printStackTrace(System.err);
-					System.err.println("SQLState: "
-							+ ((SQLException) e).getSQLState());
+					error = error+"SQLState: "
+							+ ((SQLException) e).getSQLState()+"\n";
 
-					System.err.println("Error Code: "
-							+ ((SQLException) e).getErrorCode());
+					error = error+"Error Code: "
+							+ ((SQLException) e).getErrorCode()+"\n";
 
-					System.err.println("Message: " + e.getMessage());
+					error = error+"Message: " + e.getMessage()+"\n";
 
 					Throwable t = ex.getCause();
 					while (t != null) {
-						System.out.println("Cause: " + t);
+						error = error+"Cause: " + t+"\n";
 						t = t.getCause();
 					}
 				}
 			}
 		}
+		return error;
 	}
-
-	public static boolean ignoreSQLException(String sqlState) {
+	
+	/**
+	 * 
+	 * @param sqlState
+	 * @return boolean value
+	 */
+	private static boolean ignoreSQLException(String sqlState) {
 		if (sqlState == null) {
 			System.out.println("The SQL state is not defined!");
 			return false;
@@ -69,59 +90,79 @@ public abstract class SqlHelper {
 	}
 
 	/**
-	 * executes a normal query
+	 * executes a normal query with result (SELECT e.g.)
 	 * 
 	 * @param query a normal sql statement as string 
 	 * @return ResultSet
+	 * @throws SQLException which can be handled with {@link helper.SqlHelper.class#printSQLException(SQLException e)
 	 */
-	public List<String[]> executeSQLQuery(String query) {
+	public List<String[]> executeSQLQuery(String query) throws SQLException {
 		List<String[]> rows = null;
-		try {
-			setConnect(connect());
-			// Statements allow to issue SQL queries to the database
-			setStatement(getConnect().createStatement());
-			// Result set get the result of the SQL query
-			setResultSet(getStatement()
-					.executeQuery(query));
-			
-			rows = resultSetToList();
-			
-			close();
-		} catch (SQLException e) {
-			printSQLException(e);
-		}
+		setConnect(connect());
+		// Statements allow to issue SQL queries to the database
+		setStatement(getConnect().createStatement());
+		// Result set get the result of the SQL query
+		setResultSet(getStatement()
+				.executeQuery(query));
 		
+		rows = resultSetToList();
+		
+		close();
 		return rows;
 	}
 	
 	/**
-	 * preparedStatement way of talking to the database
+	 * for SQL Querys without result (INSERT / DELETE / USE) 
+	 * 
+	 * @param query
+	 * @throws SQLException
+	 */
+	public void executeSQLQueryWithoutResult(String query) throws SQLException {
+		setConnect(connect());
+		// Statements allow to issue SQL queries to the database
+		setStatement(getConnect().createStatement());
+		
+		getStatement().execute(query);
+		
+		close();
+	}
+	
+	/**
+	 * preparedStatement way of talking with the database (UNTESTED)
 	 *  
 	 * @param statement SQL Query with ?
 	 * @param arguments String array with arguments in order to their places in the statement
 	 * @return resultSet the answer from database
+	 * @throws SQLException which can be handled with {@link helper.SqlHelper.class#printSQLException(SQLException e)
 	 */
-	public List<String[]> executePreparedStatement(String statement, String[] arguments)  {
+	public List<String[]> executePreparedStatement(String statement, String[] arguments) throws SQLException {
 		List<String[]> rows = null;
 		setConnect(connect());
-		try {
-			setPreparedStatement(getConnect().prepareStatement(statement));
-			for(int i=1;arguments.length>=i;i++) {
-				getPreparedStatement().setString(i, arguments[i-1]);
-			}
-			setResultSet(getPreparedStatement().executeQuery());
-			
-			rows = resultSetToList();
-			
-			close();
-		} catch (SQLException e) {
-			printSQLException(e);
+		setPreparedStatement(getConnect().prepareStatement(statement));
+		for(int i=1;arguments.length>=i;i++) {
+			getPreparedStatement().setString(i, arguments[i-1]);
 		}
+		setResultSet(getPreparedStatement().executeQuery());
+		
+		rows = resultSetToList();
+		
+		close();
 		return rows;
 	}
 	
-	protected abstract Connection connect();
+	/**
+	 * connection class
+	 * 
+	 * @return Connection stable sql connection or null
+	 */
+	protected abstract Connection connect() throws SQLException;
 	
+	/**
+	 * takes all data with treestructure from ResultSet and puts it into an List
+	 * 
+	 * @return List<String[]> array construct within all the data from ResultSet
+	 * @throws SQLException
+	 */
 	private List<String[]> resultSetToList() throws SQLException {
 		int columnCount = getResultSet().getMetaData().getColumnCount();
 		List<String[]> rows = new ArrayList<String[]>();
@@ -148,20 +189,25 @@ public abstract class SqlHelper {
 	 * 
 	 * @return boolean - true -> connection is working | false -> not
 	 */
-	public boolean testConnection() {
+	public boolean testConnection() throws SQLException {
+		System.out.println("=== Test db connection ===");
 		if(getConnect()!=null) {
 			close();
 		}
 		setConnect(connect());
 		if(getConnect()!=null) {
 			close();
+			System.out.println("successfull");
+			System.out.println("=== Test db connection ===");
 			return true;
 		}
+		System.out.println("db connection failed");
+		System.out.println("=== Test db connection finished ===");
 		return false;
 	}
 
 	/**
-	 * closes everything in the right order
+	 * closes everything except the connection
 	 */
 	public void close() {
 		try {
@@ -172,15 +218,33 @@ public abstract class SqlHelper {
 			if (statement != null) {
 				statement.close();
 			}
-
-			if (connect != null) {
-				connect.close();
-			}
 		} catch (Exception e) {
 
 		}
 	}
 	
+	/**
+	 * closes everything in the right order
+	 */
+	public void closeConnection() {
+		close();
+		if (connect != null) {
+			try {
+				connect.close();
+			} catch (SQLException e) {
+				
+			}
+		}
+	}
+	
+	/**
+	 * writes header information from given list on console
+	 * 
+	 * @param list from executed Query method in this class
+	 * @link helper.SqlHelper.class#executePreparedStatement(String statement, String[] arguments)
+	 * @link helper.SqlHelper.class#executeSQLQuery(String query)  
+	 * @throws SQLException
+	 */
 	private void writeMetaData(List<String[]> list) throws SQLException {
 		// Now get some metadata from the database
 		// Result set get the result of the SQL query
@@ -192,6 +256,14 @@ public abstract class SqlHelper {
 		System.out.println();
 	}
 
+	/**
+	 * writes given list in console
+	 *  
+	 * @param  list from executed Query method on this class
+	 * @link helper.SqlHelper.class#executePreparedStatement(String statement, String[] arguments)
+	 * @link helper.SqlHelper.class#executeSQLQuery(String query)  
+	 * @throws SQLException
+	 */
 	private void writeResultSet(List<String[]> list) throws SQLException {
 		for(int a=1;list.size()>a;a++) {
 			String[] row = list.get(a);
@@ -202,6 +274,14 @@ public abstract class SqlHelper {
 		}
 	}
 	
+	/**
+	 * writes everything from given SQL list on console
+	 * @param  list from executed Query method on this class
+	 * @link helper.SqlHelper.class#executePreparedStatement(String statement, String[] arguments)
+	 * @link helper.SqlHelper.class#executeSQLQuery(String query)  
+	 * @link helper.SqlHelper.class#writeMetaData(List<String[]> list)
+	 * @link helper.SqlHelper.class#writeResultSet(List<String[]> list)
+	 */
 	public void writeResultSetWithMeta(List<String[]> list) {
 		try {
 			this.writeMetaData(list);
@@ -211,71 +291,131 @@ public abstract class SqlHelper {
 			SqlHelper.printSQLException(e);
 		}
 	}
+
 	
 	/*
 	 * GETTER / SETTER 
 	 * 
 	 */
+	/**
+	 * @return database String
+	 */
 	public String getDatabase() {
 		return database;
 	}
 
+	/**
+	 * @return user String
+	 */
 	public String getUser() {
 		return user;
 	}
 
+	/**
+	 * @return passwd String
+	 */
 	public String getPasswd() {
 		return passwd;
 	}
 
+	/**
+	 * @return host String
+	 */
 	public String getHost() {
 		return host;
 	}
-
+	
+	/**
+	 * @param database
+	 */
 	public void setDatabase(String database) {
 		this.database = database;
 	}
 
+	/**
+	 * 
+	 * @param user
+	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
 
+	/**
+	 * 
+	 * @param passwd
+	 */
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
 
+	/**
+	 * 
+	 * @param host
+	 */
 	public void setHost(String host) {
 		this.host = host;
 	}
 
+	/**
+	 * 
+	 * @return connect
+	 */
 	public Connection getConnect() {
 		return connect;
 	}
 
+	/**
+	 * 
+	 * @return statement
+	 */
 	public Statement getStatement() {
 		return statement;
 	}
 
+	/**
+	 * 
+	 * @return resultSet
+	 */
 	public ResultSet getResultSet() {
 		return resultSet;
 	}
 
+	/**
+	 * 
+	 * @return preparedStatement
+	 */
 	public PreparedStatement getPreparedStatement() {
 		return preparedStatement;
 	}
 
+	/**
+	 * 
+	 * @param connect
+	 */
 	public void setConnect(Connection connect) {
 		this.connect = connect;
 	}
 
+	/**
+	 * 
+	 * @param statement
+	 */
 	public void setStatement(Statement statement) {
 		this.statement = statement;
 	}
 
+	/**
+	 * 
+	 * @param resultSet
+	 */
 	public void setResultSet(ResultSet resultSet) {
 		this.resultSet = resultSet;
 	}
 
+	/**
+	 * 
+	 * @param preparedStatement
+	 */
 	public void setPreparedStatement(PreparedStatement preparedStatement) {
 		this.preparedStatement = preparedStatement;
 	}

@@ -1,63 +1,118 @@
 package controller;
 
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import model.Databean;
 
+/**
+ * builds the complete GUI and calls the sub controller
+ * 
+ * @author incredibleXE
+ * @version 0.1
+ *
+ */
 public class GuiController {
+	private Group root;
+	private Scene scene;
+	private BorderPane borderPane;
+	private TabPane tabPane;
+	private StackPane stackPane;
+	
 	private Databean bean = null;
 	
+	/**
+	 * constructor
+	 * 
+	 * @param bean {@link model.Databean}
+	 */
 	public GuiController(Databean bean) {
 		this.bean = bean;
 	}
 	
+	/**
+	 * start method 
+	 * puts everything what has to do with gui together
+	 */
 	public void start() {
 	      bean.getStage().setTitle("DB2Prak2");
-	      Group root = new Group();
-	      Scene scene = new Scene(root, bean.getStage_width(), bean.getStage_height());
+	      root = new Group();
+	      scene = new Scene(root, bean.getStage_width(), bean.getStage_height());
 	      scene.getStylesheets().add("/resources/stylesheet.css");
-	 
-	      TabPane tabPane = new TabPane();
-	      tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-	 
-	      BorderPane borderPane = new BorderPane();
+	      
+	      stackPane = new StackPane();
+	      stackPane.prefHeightProperty().bind(scene.heightProperty());
+	      stackPane.prefWidthProperty().bind(scene.widthProperty());
 	      {
-	         Tab tab = new Tab();
-	         tab.setText("Kunde");
-	         GridPane grid = new GridPane();
-	         {
-	        	 new CustomerController(grid, bean);
-	         }
-	         tab.setContent(grid);
-	         
-	         Tab tab1 = new Tab("Mitarbeiter");
-	         GridPane grid1 = new GridPane();
-	         {
-	        	 new WorkerController(grid1);
-	         }
-	         tab1.setContent(grid1);
-	         
-	         Tab tab2 = new Tab("test");
-	         GridPane grid2 = new GridPane();
-	         {
-	        	 new WorkerController(grid2);
-	         }
-	         tab2.setContent(grid2);
-	         
-	         tabPane.getTabs().addAll(tab,tab1,tab2);
+		      borderPane = new BorderPane();
+		      {
+		    	  tabPane = new TabPane();
+			      tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+			      {
+			         Tab tab = new Tab();
+			         tab.setText("Kunde");
+			         GridPane grid = new GridPane();
+			         {
+						new CustomerController(grid, bean);
+			         }
+			         tab.setContent(grid);
+			         
+			         Tab tab1 = new Tab("Mitarbeiter");
+			         GridPane grid1 = new GridPane();
+			         {
+			        	 new WorkerController(grid1, bean);
+			         }
+			         tab1.setContent(grid1);
+			         
+			         Tab tab2 = new Tab("Abteilung");
+			         GridPane grid2 = new GridPane();
+			         {
+			        	 new DepartmentController(grid2, bean);
+			         }
+			         tab2.setContent(grid2);
+			         
+			         Tab tab3 = new Tab("Projektkategorie");
+			         GridPane grid3 = new GridPane();
+			         {
+			        	 new DepartmentController(grid3, bean);
+			         }
+			         tab3.setContent(grid3);
+			         
+			         Tab tab4 = new Tab("Tätigkeitskategorie");
+			         GridPane grid4= new GridPane();
+			         {
+			        	 new ActivitycategorieController(grid4, bean);
+			         }
+			         tab4.setContent(grid4);
+			         
+			         Tab tab5 = new Tab("Tätigkeit");
+			         GridPane grid5= new GridPane();
+			         {
+			        	 new ActivityController(grid5, bean);
+			         }
+			         tab5.setContent(grid5);
+			         
+			         Tab tab6 = new Tab("Projekt");
+			         GridPane grid6= new GridPane();
+			         {
+			        	 new ProjectController(grid6, bean);
+			         }
+			         tab6.setContent(grid6);
+			         
+			         tabPane.getTabs().addAll(tab,tab1,tab2,tab3,tab4,tab5,tab6);
+			      }
+		      }
+		      borderPane.setCenter(tabPane);
 	      }
-	 
-	      borderPane.prefHeightProperty()
-	                .bind(scene.heightProperty());
-	      borderPane.prefWidthProperty()
-	                .bind(scene.widthProperty());
-	 
-	      borderPane.setCenter(tabPane);
-	      root.getChildren().add(borderPane);
+	      bean.getConsole().setMaxHeight(80);
+	      StackPane.setAlignment(bean.getConsole(), Pos.BOTTOM_LEFT);
+	      stackPane.getChildren().addAll(borderPane,bean.getConsole());
+	      root.getChildren().add(stackPane);
 	 
 	      bean.getStage().setScene(scene);
 	      bean.getStage().show();

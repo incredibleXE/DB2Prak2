@@ -9,16 +9,20 @@ import model.Databean.DATABASE_TYPE;
 public class Main extends Application {
 
 	/**
+	 * launches the javaFX thread
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
-
+	
+	/**
+	 * start method for javaFX stage
+	 */
 	@Override
 	public void start(Stage stage) throws Exception {
 		// init data bean
-		Databean bean = new Databean("localhost", "PZM2_data","franacher","NaDine1992$",DATABASE_TYPE.MsSQL);
+		Databean bean = new Databean("localhost", "PZM2_data","","",DATABASE_TYPE.MsSQL);
 		bean.setWinlogon(true);
 		bean.setStage(stage);
 		bean.setStage_width(500);
