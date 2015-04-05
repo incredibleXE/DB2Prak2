@@ -124,7 +124,7 @@ public class ProjectcategorieController extends DbController {
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
-    		String valueTxt = "Abteilungsname='"+textField_name.getText()+"'";
+    		String valueTxt = "Bezeichnung='"+textField_name.getText()+"'";
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
     	updateForm(sql_select);
