@@ -88,7 +88,7 @@ public class GuiController {
 						         Tab tab3 = new Tab("Projektkategorie");
 						         GridPane grid3 = new GridPane();
 						         {
-						        	 new DepartmentController(grid3, bean);
+						        	 new ProjectcategorieController(grid3, bean);
 						         }
 						         tab3.setContent(grid3);
 						         

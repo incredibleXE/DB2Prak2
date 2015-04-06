@@ -123,7 +123,7 @@ public class DepartmentController extends DbController {
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
-    		String valueTxt = "Abteilungsname='"+textField_name.getText()+"'";
+    		String valueTxt = "Abteilungsname='"+textField_name.getText()+"' WHERE "+sql_idField+"='"+textField_id.getText()+"'";
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
     	updateForm(sql_select);

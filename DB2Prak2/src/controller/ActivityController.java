@@ -140,8 +140,8 @@ public class ActivityController extends DbController {
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
-    		String valueTxt = "Name='"+textField_name.getText()+"',Vorname='"+textField_amountperhour.getText()
-    				+"',Strasse='"+textField_activitycategory.getText()+"' WHERE "+sql_idField+"="+textField_id.getText();
+    		String valueTxt = "Bezeichnung='"+textField_name.getText()+"',Stundenlohn='"+textField_amountperhour.getText()
+    				+"',TaetigkeitskategorieID='"+textField_activitycategory.getText()+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
     	updateForm(sql_select);

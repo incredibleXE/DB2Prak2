@@ -141,8 +141,8 @@ public class ProjectController extends DbController {
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
-    		String valueTxt = "Name='"+textField_name.getText()+"',Vorname='"+textField_CustomerID.getText()
-    				+"',Strasse='"+textField_projectcategorieID.getText()+"' WHERE "+sql_idField+"="+textField_id.getText();
+    		String valueTxt = "Bezeichnung='"+textField_name.getText()+"',KundeNr='"+textField_CustomerID.getText()
+    				+"',ProjektkategorieID='"+textField_projectcategorieID.getText()+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
     	updateForm(sql_select);

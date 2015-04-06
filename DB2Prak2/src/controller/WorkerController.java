@@ -162,9 +162,9 @@ public class WorkerController extends DbController {
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
-    		String valueTxt = "Name='"+textField_name.getText()+"',Vorname='"+textField_forename.getText()
-    				+"',Strasse='"+textField_amountperh.getText()+"',HausNr='"+textField_abteilung.getText()
-    				+"',Postleitzahl='"+textField_finishedWork.getText()+"',Postleitzahl='"+textField_startWork.getText()
+    		String valueTxt = "FaName='"+textField_name.getText()+"',VoName='"+textField_forename.getText()
+    				+"',Studenlohn='"+textField_amountperh.getText()+"',Abteilung='"+textField_abteilung.getText()
+    				+"',Arbeitsende='"+textField_finishedWork.getText()+"',Arbeitsbegin='"+textField_startWork.getText()
     				+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
