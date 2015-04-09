@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
 import helper.MsSqlHelper;
 import helper.MySqlHelper;
@@ -270,4 +271,20 @@ abstract class DbController {
 	 * Additional it adds four buttons at the bottom for last entry, next entry, new entry and delete entry 
 	 */
 	protected abstract void makeForm();
+	
+	protected ChoiceBox<String> makeChoiceBoxFromTable(String tableName, String nameField, String idField) {
+		ChoiceBox<String> cb = new ChoiceBox<String>();
+		List<String[]> list = null;
+		try {
+			list = sqlHelper.executeSQLQuery("SELECT "+idField+","+nameField+" FROM "+tableName+";");
+		} catch (SQLException e) {
+			bean.getConsole().setText(SqlHelper.printSQLException(e));
+		}
+		if(list==null)
+			return null;
+		for(int i=1;list.size()>i;i++) {
+			cb.getItems().add(list.get(i)[1]);
+		}
+		return cb;
+	}
 }
