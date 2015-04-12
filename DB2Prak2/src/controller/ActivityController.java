@@ -1,11 +1,5 @@
 package controller;
 
-import java.util.List;
-
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -33,10 +27,8 @@ public class ActivityController extends DbController {
 	private TextField textField_id = new TextField();
 	private TextField textField_name = new TextField();
 	private TextField textField_amountperhour = new TextField();
-	private TextField textField_activitycategory = new TextField();
 	
-	private ChoiceBox<CountryObj> choiceBoxActivitycategory = new ChoiceBox<CountryObj>();
-	private ObservableList<CountryObj> CountrycomboList = null;
+	private ChoiceBox<ChoiceBoxObj> choiceBoxActivitycategory = new ChoiceBox<ChoiceBoxObj>();
 	
 	// somem strings
 	private String newEntryDisplayTxt; 
@@ -45,7 +37,7 @@ public class ActivityController extends DbController {
 	 * constructor
 	 * 
 	 * @see controller.DbController.class#constructor()
-	 * @param grid GridPane from {@link controller.GuiController.class)
+	 * @param grid GridPane from {@link controller.GuiController.class}
 	 * @param bean Databean where all informations are saved in {@link model.Databean.class}
 	 */
 	public ActivityController(GridPane grid,Databean bean) {
@@ -62,16 +54,6 @@ public class ActivityController extends DbController {
 		textField_id.setEditable(false);
 		
 		makeForm();
-
-		choiceBoxActivitycategory.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<CountryObj>() {
-
-	        public void changed(ObservableValue<? extends CountryObj> arg0, CountryObj arg1, CountryObj arg2) {
-	            if (arg2 != null) {
-	                System.out.println("Selected Country: " + arg2.getTCountryCode());
-	            }
-	        }
-
-	    });
 		
 		//
 		// Listener 
@@ -79,16 +61,15 @@ public class ActivityController extends DbController {
 		initListener();
 	}
 	
+	/**
+	 * @see DbController#updateForm()
+	 */
 	@Override
 	public void updateForm(String sql_string) {
 		super.updateForm(sql_string);
-		List<String[]> sqlList = super.executeSQLQuery("SELECT TaetigkeitskategorieID, Bezeichnung FROM Taetigkeitskategorie");
-		CountrycomboList = FXCollections.observableArrayList();
-		for(int i=1;sqlList.size()>i;i++)
-			CountrycomboList.add(new CountryObj(sqlList.get(i)[1],sqlList.get(i)[0])); 
-
-		choiceBoxActivitycategory.setItems(CountrycomboList);
-		choiceBoxActivitycategory.setValue(new CountryObj(result.get(this.displayedRow)[3]));
+		
+		choiceBoxActivitycategory.setItems(makeObservableList("Taetigkeitskategorie", "Bezeichnung", "TaetigkeitskategorieID"));
+		choiceBoxActivitycategory.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[3]));
 	}
 	
 	/**
@@ -101,8 +82,7 @@ public class ActivityController extends DbController {
 		textField_id.setText(result.get(this.displayedRow)[0]);
 		textField_name.setText(result.get(this.displayedRow)[1]);
 		textField_amountperhour.setText(result.get(this.displayedRow)[2]);
-		textField_activitycategory.setText(result.get(this.displayedRow)[3]);
-		choiceBoxActivitycategory.setValue(new CountryObj(result.get(this.displayedRow)[3]));
+		choiceBoxActivitycategory.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[3]));
 	}
 	
 	/**
@@ -131,11 +111,6 @@ public class ActivityController extends DbController {
 			{ // column 4
 				column++;
 				formGrid.add(new Label("Tätigkeitskategorie:"), 0, column);
-				formGrid.add(textField_activitycategory, 1, column);
-			}
-			{ // column 4
-				column++;
-				formGrid.add(new Label("Tätigkeitskategorie:"), 0, column);
 				formGrid.add(choiceBoxActivitycategory, 1, column);
 			}
 		}
@@ -152,7 +127,6 @@ public class ActivityController extends DbController {
     	textField_id.setText(newEntryDisplayTxt);
 		textField_name.setText("");
 		textField_amountperhour.setText("");
-		textField_activitycategory.setText("");
 		button_new.setText("Reset");
 		button_delete.setDisable(true);
 	}
@@ -174,66 +148,16 @@ public class ActivityController extends DbController {
 	@Override
 	protected void button_save_handle() {
     	if(textField_id.getText().toString().equals(newEntryDisplayTxt)) {
-    		String valueTxt = "('"+textField_name.getText()+"','"+textField_amountperhour.getText()+"','"+textField_activitycategory.getText()+"')";
+    		String valueTxt = "('"+textField_name.getText()+"','"+textField_amountperhour.getText()+"','"+this.choiceBoxActivitycategory.getSelectionModel().getSelectedItem().getDb_id()+"')";
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
     		String valueTxt = "Bezeichnung='"+textField_name.getText()+"',Stundenlohn='"+textField_amountperhour.getText()
-    				+"',TaetigkeitskategorieID='"+this.choiceBoxActivitycategory.getSelectionModel().getSelectedItem().getTCountryCode()+"' WHERE "+sql_idField+"="+textField_id.getText();
+    				+"',TaetigkeitskategorieID='"+this.choiceBoxActivitycategory.getSelectionModel().getSelectedItem().getDb_id()+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
     	updateForm(sql_select);
 	}
 	
-	public class CountryObj {
-		private  String TCountryDescr;
-		private  String TCountryCode;        
 
-		public CountryObj(String CountryDescr,String CountryCode) {
-		    this.TCountryDescr = CountryDescr;         
-		    this.TCountryCode = CountryCode;             
-		}
-		public CountryObj(String CountryCode) {         
-		    this.TCountryCode = CountryCode;  
-		}
-		public String getTCountryCode() {
-		    return TCountryCode;
-		}
-		public void setTCountryCode(String fComp) {
-		    TCountryCode= fComp;
-		}         
-		public String getTCountryDescr() {
-		    return TCountryDescr;
-		}
-		public void setCountryDescr(String fdescr) {
-		    TCountryDescr = fdescr;
-		}                 
-		@Override
-		public String toString() {
-		    return TCountryDescr;
-		}   
-		@Override
-		public int hashCode() {
-		    int hash = 0;
-		    hash += (TCountryCode != null ? TCountryCode.hashCode() : 0);
-		    return hash;
-		}
-
-		@Override
-		public boolean equals(Object object) {
-		     String otherTCountryCode = "";
-		    if (object instanceof CountryObj) {
-		        otherTCountryCode = ((CountryObj)object).TCountryCode;
-		    } else if(object instanceof String){
-		        otherTCountryCode = (String)object;
-		    } else {
-		        return false;
-		    }   
-
-		    if ((this.TCountryCode == null && otherTCountryCode != null) || (this.TCountryCode != null && !this.TCountryCode.equals(otherTCountryCode))) {
-		        return false;
-		    }
-		    return true;
-		}    
-	}
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -26,11 +27,13 @@ public class ProjectController extends DbController {
 	// text fields
 	private TextField textField_id = new TextField();
 	private TextField textField_name = new TextField();
-	private TextField textField_CustomerID = new TextField();
-	private TextField textField_projectcategorieID = new TextField();
 	
 	// somem strings
 	private String newEntryDisplayTxt; 
+	
+	// choice boxes
+	private ChoiceBox<ChoiceBoxObj> choiceBox_customer= new ChoiceBox<ChoiceBoxObj>();
+	private ChoiceBox<ChoiceBoxObj> choiceBox_projectcategorie= new ChoiceBox<ChoiceBoxObj>();
 	
 	/**
 	 * constructor
@@ -60,6 +63,21 @@ public class ProjectController extends DbController {
 		initListener();
 	}
 	
+
+	/**
+	 * @see DbController#updateForm()
+	 */
+	@Override
+	public void updateForm(String sql_string) {
+		super.updateForm(sql_string);
+		
+		choiceBox_customer.setItems(makeObservableList("Kunde", "Concat(Name,', ',Vorname)", "KundenNr"));
+		choiceBox_customer.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[2]));
+		
+		choiceBox_projectcategorie.setItems(makeObservableList("Projektkategorie", "Bezeichnung", "ProjektkategorieID"));
+		choiceBox_projectcategorie.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[3]));
+	}
+	
 	/**
 	 * writes information from sql list into form
 	 *  
@@ -69,8 +87,9 @@ public class ProjectController extends DbController {
 	protected void writeDataToForm() {
 		textField_id.setText(result.get(this.displayedRow)[0]);
 		textField_name.setText(result.get(this.displayedRow)[1]);
-		textField_CustomerID.setText(result.get(this.displayedRow)[2]);
-		textField_projectcategorieID.setText(result.get(this.displayedRow)[3]);
+		
+		choiceBox_customer.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[2]));
+		choiceBox_projectcategorie.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[3]));
 	}
 	
 	/**
@@ -94,12 +113,12 @@ public class ProjectController extends DbController {
 			{ // column 3
 				column++;
 				formGrid.add(new Label("Kundennummer:"), 0, column);
-				formGrid.add(textField_CustomerID, 1, column);
+				formGrid.add(choiceBox_customer, 1, column);
 			}
 			{ // column 4
 				column++;
 				formGrid.add(new Label("Projektkategorienummer:"), 0, column);
-				formGrid.add(textField_projectcategorieID, 1, column);
+				formGrid.add(choiceBox_projectcategorie, 1, column);
 			}
 		}
 		this.grid.add(formGrid, 0, 0);
@@ -114,8 +133,6 @@ public class ProjectController extends DbController {
 	protected void button_new_handle() {
     	textField_id.setText(newEntryDisplayTxt);
 		textField_name.setText("");
-		textField_CustomerID.setText("");
-		textField_projectcategorieID.setText("");
 		button_new.setText("Reset");
 		button_delete.setDisable(true);
 	}
@@ -137,12 +154,12 @@ public class ProjectController extends DbController {
 	@Override
 	protected void button_save_handle() {
     	if(textField_id.getText().toString().equals(newEntryDisplayTxt)) {
-    		String valueTxt = "('"+textField_name.getText()+"','"+textField_CustomerID.getText()+"','"+textField_projectcategorieID.getText()+"')";
+    		String valueTxt = "('"+textField_name.getText()+"','"+choiceBox_customer.getSelectionModel().getSelectedItem().getDb_id()+"','"+choiceBox_projectcategorie.getSelectionModel().getSelectedItem().getDb_id()+"')";
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
-    		String valueTxt = "Bezeichnung='"+textField_name.getText()+"',KundeNr='"+textField_CustomerID.getText()
-    				+"',ProjektkategorieID='"+textField_projectcategorieID.getText()+"' WHERE "+sql_idField+"="+textField_id.getText();
+    		String valueTxt = "Bezeichnung='"+textField_name.getText()+"',KundeNr='"+choiceBox_customer.getSelectionModel().getSelectedItem().getDb_id()
+    				+"',ProjektkategorieID='"+choiceBox_projectcategorie.getSelectionModel().getSelectedItem().getDb_id()+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
     	}
     	updateForm(sql_select);

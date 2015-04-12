@@ -1,6 +1,7 @@
 package controller;
 
 import model.Databean;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -28,9 +29,11 @@ public class WorkerController extends DbController {
 	private TextField textField_name = new TextField();
 	private TextField textField_forename = new TextField();
 	private TextField textField_amountperh = new TextField();
-	private TextField textField_abteilung = new TextField();
 	private TextField textField_finishedWork = new TextField();
 	private TextField textField_startWork = new TextField();
+	
+	// choice boxes
+	private ChoiceBox<ChoiceBoxObj> choiceBox_department= new ChoiceBox<ChoiceBoxObj>();
 	
 	// somem strings
 	private String newEntryDisplayTxt; 
@@ -64,6 +67,17 @@ public class WorkerController extends DbController {
 	}
 	
 	/**
+	 * @see DbController#updateForm()
+	 */
+	@Override
+	public void updateForm(String sql_string) {
+		super.updateForm(sql_string);
+		
+		choiceBox_department.setItems(makeObservableList("Abteilung", "Abteilungsname", "AbteilungsID"));
+		choiceBox_department.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[4]));
+	}
+	
+	/**
 	 * @see DbController#writeDataToForm()
 	 */
 	@Override
@@ -72,9 +86,10 @@ public class WorkerController extends DbController {
 		textField_name.setText(result.get(this.displayedRow)[1]);
 		textField_forename.setText(result.get(this.displayedRow)[2]);
 		textField_amountperh.setText(result.get(this.displayedRow)[3]);
-		textField_abteilung.setText(result.get(this.displayedRow)[4]);
 		textField_finishedWork.setText(result.get(this.displayedRow)[5]);
 		textField_startWork.setText(result.get(this.displayedRow)[5]);
+		
+		choiceBox_department.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[4]));
 	}
 	
 	/**
@@ -107,7 +122,7 @@ public class WorkerController extends DbController {
 			{ // column 4
 				column++;
 				formGrid.add(new Label("Abteilung:"), 0, column);
-				formGrid.add(textField_abteilung, 1, column);
+				formGrid.add(choiceBox_department, 1, column);
 			}
 			{ // column 5
 				column++;
@@ -134,7 +149,6 @@ public class WorkerController extends DbController {
 		textField_name.setText("");
 		textField_forename.setText("");
 		textField_amountperh.setText("");
-		textField_abteilung.setText("");
 		textField_finishedWork.setText("00:00:00");
 		textField_startWork.setText("00:00:00");
 		button_new.setText("Reset");
@@ -158,12 +172,12 @@ public class WorkerController extends DbController {
 	@Override
 	protected void button_save_handle() {
 		if(textField_id.getText().toString().equals(newEntryDisplayTxt)) {
-    		String valueTxt = "('"+textField_name.getText()+"','"+textField_forename.getText()+"','"+textField_amountperh.getText()+"','"+textField_abteilung.getText()+"','"+textField_finishedWork.getText()+"','"+textField_startWork.getText()+"')";
+    		String valueTxt = "('"+textField_name.getText()+"','"+textField_forename.getText()+"','"+textField_amountperh.getText()+"','"+this.choiceBox_department.getSelectionModel().getSelectedItem().getDb_id()+"','"+textField_finishedWork.getText()+"','"+textField_startWork.getText()+"')";
     		executeSQLQueryWithoutResult(sql_newEntry+valueTxt);
     		button_new.setText("Neu");
     	} else {
     		String valueTxt = "FaName='"+textField_name.getText()+"',VoName='"+textField_forename.getText()
-    				+"',Studenlohn='"+textField_amountperh.getText()+"',Abteilung='"+textField_abteilung.getText()
+    				+"',Studenlohn='"+textField_amountperh.getText()+"',Abteilung='"+this.choiceBox_department.getSelectionModel().getSelectedItem().getDb_id()
     				+"',Arbeitsende='"+textField_finishedWork.getText()+"',Arbeitsbegin='"+textField_startWork.getText()
     				+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);

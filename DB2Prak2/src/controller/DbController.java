@@ -3,10 +3,11 @@ package controller;
 import java.sql.SQLException;
 import java.util.List;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
 import helper.MsSqlHelper;
 import helper.MySqlHelper;
@@ -272,19 +273,65 @@ abstract class DbController {
 	 */
 	protected abstract void makeForm();
 	
-	protected ChoiceBox<String> makeChoiceBoxFromTable(String tableName, String nameField, String idField) {
-		ChoiceBox<String> cb = new ChoiceBox<String>();
-		List<String[]> list = null;
-		try {
-			list = sqlHelper.executeSQLQuery("SELECT "+idField+","+nameField+" FROM "+tableName+";");
-		} catch (SQLException e) {
-			bean.getConsole().setText(SqlHelper.printSQLException(e));
+	protected ObservableList<ChoiceBoxObj> makeObservableList(String tableName, String nameField, String idField) {
+		List<String[]> sqlList = this.executeSQLQuery("SELECT "+idField+", "+nameField+" FROM "+tableName+";");
+		ObservableList<ChoiceBoxObj> comboList = FXCollections.observableArrayList();
+		for(int i=1;sqlList.size()>i;i++)
+			comboList.add(new ChoiceBoxObj(sqlList.get(i)[1],sqlList.get(i)[0]));
+		  
+		
+		return comboList;
+	}
+	
+	protected class ChoiceBoxObj {
+		private  String description;
+		private  String db_id;        
+
+		public ChoiceBoxObj(String description,String db_id) {
+		    this.description = description;         
+		    this.db_id = db_id;             
 		}
-		if(list==null)
-			return null;
-		for(int i=1;list.size()>i;i++) {
-			cb.getItems().add(list.get(i)[1]);
+		public ChoiceBoxObj(String db_id) {         
+		    this.db_id = db_id;  
 		}
-		return cb;
+		public String getDb_id() {
+		    return db_id;
+		}
+		public void setDb_id(String db_id) {
+			this.db_id= db_id;
+		}         
+		public String getDescription() {
+		    return description;
+		}
+		public void setDescription(String description) {
+		    this.description = description;
+		}                 
+		@Override
+		public String toString() {
+		    return description;
+		}   
+		@Override
+		public int hashCode() {
+		    int hash = 0;
+		    hash += (db_id != null ? db_id.hashCode() : 0);
+		    return hash;
+		}
+
+		@Override
+		public boolean equals(Object object) {
+		     String otherDb_id = "";
+		    if (object instanceof ChoiceBoxObj) {
+		    	otherDb_id = ((ChoiceBoxObj)object).db_id;
+		    } else if(object instanceof String){
+		    	otherDb_id = (String)object;
+		    } else {
+		        return false;
+		    }   
+
+		    if ((this.db_id == null && otherDb_id != null) || (this.db_id != null && !this.db_id.equals(otherDb_id))) {
+		        return false;
+		    }
+		    return true;
+		}    
 	}
 }
