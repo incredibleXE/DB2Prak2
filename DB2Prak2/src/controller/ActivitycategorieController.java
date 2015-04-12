@@ -35,7 +35,7 @@ public class ActivitycategorieController extends DbController {
 	 * 
 	 * @see controller.DbController.class#constructor()
 	 * @param grid GridPane from {@link controller.GuiController.class)
-	 * @param bean Databean where all informations are saved in {@link model.Databean.class}
+	 * @param bean Databean where all information are saved in {@link model.Databean.class}
 	 */
 	public ActivitycategorieController(GridPane grid,Databean bean) {
 		super(bean);

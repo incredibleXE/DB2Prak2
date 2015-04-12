@@ -134,7 +134,7 @@ abstract class DbController {
 	 * @see helper.SqlHelper#executePreparedStatement(String, String[])
 	 * @param statement
 	 * @param arguments
-	 * @return List<String[]> with all the informations from db
+	 * @return List<String[]> with all the information from db
 	 */
 	public List<String[]> executePreparedStatement(String statement, String[] arguments) {
 		try {

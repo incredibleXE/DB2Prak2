@@ -22,7 +22,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		// init data bean
-		Databean bean = new Databean("localhost", "PZM2_data","","",DATABASE_TYPE.MsSQL);
+		Databean bean = new Databean("localhost", "PZM","Daniel","wahrsteiner",DATABASE_TYPE.MsSQL);
 		bean.setWinlogon(true);
 		bean.setStage(stage);
 		bean.setStage_width(500);
