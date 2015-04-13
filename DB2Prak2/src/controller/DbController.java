@@ -19,7 +19,7 @@ import model.Databean;
  * something like a bridge class between tableController (customerControler e.g.) and the SqlHelper classes
  *  
  * @version 0.1
- * @author franacher
+ * @author incredibleXE
  *
  */
 abstract class DbController {

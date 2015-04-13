@@ -10,7 +10,7 @@ import model.Databean;
  * controller for table "Projekt"
  * 
  * @extends controller.DbController.class
- * @author franacher
+ * @author incredibleXE
  * @version 0.1
  */
 public class ProjectController extends DbController {
