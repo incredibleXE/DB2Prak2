@@ -71,7 +71,7 @@ public class ProjectController extends DbController {
 	public void updateForm(String sql_string) {
 		super.updateForm(sql_string);
 		
-		choiceBox_customer.setItems(makeObservableList("Kunde", "Concat(Name,', ',Vorname)", "KundenNr"));
+		choiceBox_customer.setItems(makeObservableList("Kunde", "Concat(RTRIM(Name),', ',RTRIM(Vorname))", "KundenNr"));
 		choiceBox_customer.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[2]));
 		
 		choiceBox_projectcategorie.setItems(makeObservableList("Projektkategorie", "Bezeichnung", "ProjektkategorieID"));
