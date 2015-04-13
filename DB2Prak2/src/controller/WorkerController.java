@@ -177,7 +177,7 @@ public class WorkerController extends DbController {
     		button_new.setText("Neu");
     	} else {
     		String valueTxt = "FaName='"+textField_name.getText()+"',VoName='"+textField_forename.getText()
-    				+"',Studenlohn='"+textField_amountperh.getText()+"',Abteilung='"+this.choiceBox_department.getSelectionModel().getSelectedItem().getDb_id()
+    				+"',Stundenlohn='"+textField_amountperh.getText()+"',Abteilung='"+this.choiceBox_department.getSelectionModel().getSelectedItem().getDb_id()
     				+"',Arbeitsende='"+textField_finishedWork.getText()+"',Arbeitsbegin='"+textField_startWork.getText()
     				+"' WHERE "+sql_idField+"="+textField_id.getText();
     		executeSQLQueryWithoutResult(sql_saveEntry+valueTxt);
