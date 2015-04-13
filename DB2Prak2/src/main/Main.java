@@ -22,8 +22,8 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		// init data bean
-		Databean bean = new Databean("localhost", "PZM","Daniel","wahrsteiner",DATABASE_TYPE.MsSQL);
-		bean.setWinlogon(true);
+		Databean bean = new Databean("localhost", "PZM2_data","rootUser1","franacher",DATABASE_TYPE.MsSQL);
+		bean.setWinlogon(false);
 		bean.setStage(stage);
 		bean.setStage_width(500);
 		bean.setStage_height(500);

@@ -74,7 +74,7 @@ public class WorkerController extends DbController {
 		super.updateForm(sql_string);
 		
 		choiceBox_department.setItems(makeObservableList("Abteilung", "Abteilungsname", "AbteilungsID"));
-		choiceBox_department.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[6]));
+		choiceBox_department.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[4]));
 	}
 	
 	/**
@@ -86,10 +86,10 @@ public class WorkerController extends DbController {
 		textField_name.setText(result.get(this.displayedRow)[1]);
 		textField_forename.setText(result.get(this.displayedRow)[2]);
 		textField_amountperh.setText(result.get(this.displayedRow)[3]);
-		textField_finishedWork.setText(result.get(this.displayedRow)[4]);
-		textField_startWork.setText(result.get(this.displayedRow)[5]);
+		textField_finishedWork.setText(result.get(this.displayedRow)[5]);
+		textField_startWork.setText(result.get(this.displayedRow)[6]);
 		
-		choiceBox_department.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[6]));
+		choiceBox_department.setValue(new ChoiceBoxObj(result.get(this.displayedRow)[4]));
 	}
 	
 	/**

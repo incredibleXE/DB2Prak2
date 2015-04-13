@@ -56,7 +56,7 @@ public class MsSqlHelper extends SqlHelper {
 	protected Connection connect() throws SQLException {
 		if(getConnect()==null || getConnect().isClosed()) {
 			try {
-				String url = "jdbc:jtds:sqlserver://" + getHost() + ":1433;databaseName="+ getDatabase();
+				String url = "jdbc:jtds:sqlserver://" + getHost() + ";databaseName="+ getDatabase();
 				if (winlogon == false) {
 					Class.forName("net.sourceforge.jtds.jdbc.Driver");
 					setConnect(DriverManager.getConnection(url, getUser(), getPasswd()));
