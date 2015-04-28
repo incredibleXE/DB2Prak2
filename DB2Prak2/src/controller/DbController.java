@@ -3,15 +3,13 @@ package controller;
 import java.sql.SQLException;
 import java.util.List;
 
+import sqlHelper.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-import helper.MsSqlHelper;
-import helper.MySqlHelper;
-import helper.SqlHelper;
 import model.Databean;
 
 /**
@@ -113,7 +111,7 @@ abstract class DbController {
 		try {
 			return sqlHelper.executeSQLQuery(query);
 		} catch (SQLException e) {
-			bean.getConsole().setText(helper.SqlHelper.printSQLException(e));
+			bean.getConsole().setText(SqlHelper.printSQLException(e));
 		}
 		return null;
 	}
@@ -126,7 +124,7 @@ abstract class DbController {
 		try {
 			sqlHelper.executeSQLQueryWithoutResult(query);
 		} catch (SQLException e) {
-			bean.getConsole().setText(helper.SqlHelper.printSQLException(e));
+			bean.getConsole().setText(SqlHelper.printSQLException(e));
 		}
 	}
 	
@@ -140,7 +138,7 @@ abstract class DbController {
 		try {
 			return sqlHelper.executePreparedStatement(statement, arguments);
 		} catch (SQLException e) {
-			bean.getConsole().setText(helper.SqlHelper.printSQLException(e));
+			bean.getConsole().setText(SqlHelper.printSQLException(e));
 		}
 		return null;
 	}
@@ -154,7 +152,7 @@ abstract class DbController {
 		try {
 			sqlHelper.executeSQLQueryWithoutResult("DELETE FROM "+tableName+" WHERE "+whereStatement);
 		} catch (SQLException e) {
-			bean.getConsole().setText(helper.SqlHelper.printSQLException(e));
+			bean.getConsole().setText(SqlHelper.printSQLException(e));
 		}
 	}
 	
